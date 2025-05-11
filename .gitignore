@@ -1,0 +1,33 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Flask instance folder
+instance/
+
+# Environment files
+.env
+.venv/
+env/
+venv/
+ENV/
+
+# IDEs y editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Archivos de logs y bases de datos locales
+*.log
+*.sqlite3
+
+# Archivos temporales
+*.bak
+*.tmp
+*.DS_Store
+Thumbs.db
+
+# ZIPs, dumps u otros paquetes locales
+*.zip
