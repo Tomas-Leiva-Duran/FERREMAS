@@ -39,5 +39,8 @@ def agregar_producto():
     nuevo_producto = request.json
     return jsonify({'mensaje': 'Producto recibido', 'producto': nuevo_producto}), 201
 
+#if __name__ == '__main__':
+#    app.run(debug=True)
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
