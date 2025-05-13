@@ -24,3 +24,80 @@ main {
 h2 {
     color: #2e3a59;
 }
+
+/* Categoría + búsqueda: contenedor principal */
+.category-search-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f3f3f3;
+  padding: 10px 20px;
+  border-radius: 10px;
+}
+
+/* Menú de categorías */
+.categories-menu {
+  position: relative;
+}
+
+.categories-menu .label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.categories-menu button {
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Lista desplegable */
+#category-list {
+  list-style: none;
+  padding: 10px;
+  background-color: white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  position: absolute;
+  top: 35px;
+  left: 0;
+  z-index: 10;
+  display: none;
+}
+
+#category-list li {
+  margin: 5px 0;
+}
+
+#category-list li a {
+  text-decoration: none;
+  color: #333;
+}
+
+/* Clase que oculta el menú */
+.hidden {
+  display: none;
+}
+
+/* Barra de búsqueda */
+.search-form {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.search-form input {
+  padding: 8px;
+  border: none;
+  outline: none;
+}
+
+.search-form button {
+  padding: 8px 10px;
+  background-color: #0066cc;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
