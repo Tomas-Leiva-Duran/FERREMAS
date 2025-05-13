@@ -13,6 +13,36 @@
             <a href="/productos">Productos</a> |
             <a href="/contacto">Contacto</a>
         </nav>
+        <!-- Categorías + barra de búsqueda (bloque superior) -->
+<div class="category-search-bar">
+  <!-- Columna de Categorías -->
+  <div class="categories-menu">
+    <span class="label">Categorías</span>
+    <button id="menu-toggle" aria-label="Toggle Menu">
+      &#9776; <!-- ícono hamburguesa -->
+    </button>
+
+    <!-- Lista desplegable de categorías -->
+    <ul id="category-list" class="hidden">
+      <li><a href="#">Aseo y Jardín</a></li>
+      <li><a href="#">Automotriz</a></li>
+      <li><a href="#">Carpintería</a></li>
+      <li><a href="#">Electricidad e Iluminación</a></li>
+      <li><a href="#">Ferretería y Taller</a></li>
+      <li><a href="#">Herramientas</a></li>
+      <li><a href="#">Industrial</a></li>
+      <li><a href="#">Invernaderos</a></li>
+      <li><a href="#">Soldadoras y accesorios</a></li>
+    </ul>
+  </div>
+
+  <!-- Barra de búsqueda -->
+  <form class="search-form" method="get" action="#">
+    <input type="text" name="s" placeholder="¿Qué necesitas?" />
+    <button type="submit">🔍</button>
+  </form>
+</div>
+
     </header>
     <main>
         {% block content %}{% endblock %}
@@ -22,3 +52,10 @@
     </footer>
 </body>
 </html>
+
+<script>
+  document.getElementById("menu-toggle").addEventListener("click", function () {
+    const list = document.getElementById("category-list");
+    list.classList.toggle("hidden");
+  });
+</script>
