@@ -45,59 +45,58 @@ h2 {
   margin-right: 10px;
 }
 
-.categories-menu button {
-  font-size: 24px;
-  background: none;
-  border: none;
-  cursor: pointer;
+/* Estilos del botón de hamburguesa  */
+.menu-button {
+    cursor: pointer;
+    font-size: 24px;  /* Asegúrate de que coincida con el tamaño anterior  */
+    background: none;
+    border: none;
+    /* display: none;   Ocultar por defecto en pantallas grandes */
 }
 
-/* Lista desplegable */
+.menu-toggle {
+    display: none;  /* Ocultar el checkbox */
+}
+
+/* Lista desplegable  */
 #category-list {
-  list-style: none;
-  padding: 10px;
-  background-color: white;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  position: absolute;
-  top: 35px;
-  left: 0;
-  z-index: 10;
-  display: none;
+    list-style: none;
+    padding: 10px;
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 35px;
+    left: 0;
+    z-index: 10;
+    /* display: none; */  /* Ocultar por defecto */
 }
 
 #category-list li {
-  margin: 5px 0;
+    margin: 5px 0;
 }
 
 #category-list li a {
-  text-decoration: none;
-  color: #333;
+    text-decoration: none;
+    color: #333;
 }
 
 /* Clase que oculta el menú */
 .hidden {
-  display: none;
+    display: none;
 }
 
-/* Barra de búsqueda */
-.search-form {
-  display: flex;
-  align-items: center;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  overflow: hidden;
+/* Mostrar/ocultar el menú  */
+#menu-toggle:checked + .menu-button + #category-list {
+    display: block;  /* Mostrar el menú  */
 }
 
-.search-form input {
-  padding: 8px;
-  border: none;
-  outline: none;
-}
+/* Media query para dispositivos móviles  */
+@media (max-width: 768px) {
+    .categories-menu .label {
+        display: none;  /* Ocultar "Categorías" en móvil  */
+    }
 
-.search-form button {
-  padding: 8px 10px;
-  background-color: #0066cc;
-  color: white;
-  border: none;
-  cursor: pointer;
+    .menu-button {
+        display: block; /* Mostrar el botón en móvil */
+    }
 }
