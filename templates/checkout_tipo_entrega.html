@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Checkout - Tipo de Entrega{% endblock %}
+{% block content %}
+<h2 class="mb-4">Tipo de Entrega</h2>
+<form method="post">
+    <div class="mb-3">
+        <label class="form-label">Selecciona el tipo de entrega:</label>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="tipo_entrega" id="entrega_domicilio" value="domicilio" required>
+            <label class="form-check-label" for="entrega_domicilio">Despacho a domicilio</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="tipo_entrega" id="entrega_tienda" value="tienda" required>
+            <label class="form-check-label" for="entrega_tienda">Retiro en tienda</label>
+        </div>
+    </div>
+    <div class="mt-4 text-end">
+        <button type="submit" class="btn btn-primary btn-lg">Continuar</button>
+    </div>
+</form>
+{% endblock %} 

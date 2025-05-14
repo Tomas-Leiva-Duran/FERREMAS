@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Pago Exitoso{% endblock %}
+{% block content %}
+<div class="text-center mt-5">
+    <h2 class="text-success"><i class="fas fa-check-circle"></i> ¡Pago realizado con éxito!</h2>
+    <p>Gracias por tu compra. Tu transacción fue autorizada.</p>
+    <div class="card mx-auto my-4" style="max-width:400px;">
+        <div class="card-body">
+            <h5 class="card-title">Resumen de la transacción</h5>
+            <ul class="list-group list-group-flush text-start">
+                <li class="list-group-item"><strong>Orden:</strong> {{ datos.buy_order }}</li>
+                <li class="list-group-item"><strong>Monto:</strong> ${{ datos.amount }}</li>
+                <li class="list-group-item"><strong>Fecha:</strong> {{ datos.transaction_date }}</li>
+                <li class="list-group-item"><strong>Tarjeta:</strong> **** **** **** {{ datos.card_detail.card_number[-4:] }}</li>
+                <li class="list-group-item"><strong>Autorización:</strong> {{ datos.authorization_code }}</li>
+            </ul>
+        </div>
+    </div>
+    <a href="/" class="btn btn-primary">Volver al inicio</a>
+</div>
+{% endblock %} 

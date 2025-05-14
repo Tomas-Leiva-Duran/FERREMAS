@@ -2,49 +2,434 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>FERREMAS - {% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Ferremas{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <header>
-        <h1>FERREMAS</h1>
-        <nav>
-            <a href="/">Inicio</a> |
-            <a href="/productos">Productos</a> |
-            <a href="/contacto">Contacto</a>
-        </nav>
-        <div class="category-search-bar">
-  <div class="categories-menu">
-    <span class="label">Categorías</span>
-    <input type="checkbox" id="menu-toggle" class="menu-toggle">
-    <label for="menu-toggle" class="menu-button" aria-label="Toggle Menu">
-      &#9776; </label>
+    <!-- Barra de navegación sticky -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top shadow-sm py-2">
+        <div class="container-fluid align-items-center">
+            <!-- Logo -->
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <span class="fw-bold" style="font-size:1.5rem;">FERREMAS</span>
+            </a>
+            <!-- Barra de búsqueda -->
+            <form class="d-none d-md-flex flex-grow-1 mx-3 search-form" id="searchForm">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Buscar productos...">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <div id="searchResults" class="search-results"></div>
+            </form>
+            <!-- Categorías + Hamburguesa -->
+            <button class="btn btn-link d-flex align-items-center ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCategorias" aria-controls="offcanvasCategorias">
+                <i class="fas fa-bars fa-lg me-1"></i>
+                <span class="fw-semibold">Categorías</span>
+            </button>
+            <!-- Carrito -->
+            <button class="btn btn-link position-relative ms-2" data-bs-toggle="modal" data-bs-target="#cartModal">
+                <i class="fas fa-shopping-cart fa-lg"></i>
+                <span class="badge bg-danger position-absolute top-0 start-100 translate-middle p-1" id="cartCount" style="font-size:0.75rem;">0</span>
+            </button>
+        </div>
+        <!-- Barra de búsqueda móvil -->
+        <div class="container-fluid d-md-none mt-2">
+            <form class="search-form w-100" id="searchFormMobile">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Buscar productos...">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </nav>
 
-    <ul id="category-list" class="hidden">
-      <li><a href="#">Aseo y Jardín</a></li>
-      <li><a href="#">Automotriz</a></li>
-      <li><a href="#">Carpintería</a></li>
-      <li><a href="#">Electricidad e Iluminación</a></li>
-      <li><a href="#">Ferretería y Taller</a></li>
-      <li><a href="#">Herramientas</a></li>
-      <li><a href="#">Industrial</a></li>
-      <li><a href="#">Invernaderos</a></li>
-      <li><a href="#">Soldadoras y accesorios</a></li>
-    </ul>
-  </div>
+    <!-- Offcanvas Categorías -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasCategorias" aria-labelledby="offcanvasCategoriasLabel">
+        <div class="offcanvas-header border-bottom">
+            <h5 class="offcanvas-title" id="offcanvasCategoriasLabel">Categorías</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+            <div id="categoriasMain" class="categorias-menu-list">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex align-items-center justify-content-between" data-categoria="herramientas">
+                        <span><i class="fas fa-tools me-2"></i>Herramientas</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center justify-content-between" data-categoria="construccion">
+                        <span><i class="fas fa-hard-hat me-2"></i>Construcción</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center justify-content-between" data-categoria="electricidad">
+                        <span><i class="fas fa-bolt me-2"></i>Electricidad</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center justify-content-between" data-categoria="plomeria">
+                        <span><i class="fas fa-faucet me-2"></i>Plomería</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </li>
+                </ul>
+            </div>
+            <!-- Subcategorías (navegación tipo slide) -->
+            <div id="subcategoriasHerramientas" class="categorias-menu-list d-none">
+                <div class="d-flex align-items-center border-bottom px-3 py-2">
+                    <button class="btn btn-link p-0 me-2" id="backToMain1"><i class="fas fa-chevron-left"></i></button>
+                    <span class="fw-semibold">Herramientas</span>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Herramientas Manuales</li>
+                    <li class="list-group-item">Herramientas Eléctricas</li>
+                    <li class="list-group-item">Herramientas de Jardín</li>
+                </ul>
+            </div>
+            <div id="subcategoriasConstruccion" class="categorias-menu-list d-none">
+                <div class="d-flex align-items-center border-bottom px-3 py-2">
+                    <button class="btn btn-link p-0 me-2" id="backToMain2"><i class="fas fa-chevron-left"></i></button>
+                    <span class="fw-semibold">Construcción</span>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Materiales Básicos</li>
+                    <li class="list-group-item">Pinturas</li>
+                    <li class="list-group-item">Acabados</li>
+                </ul>
+            </div>
+            <div id="subcategoriasElectricidad" class="categorias-menu-list d-none">
+                <div class="d-flex align-items-center border-bottom px-3 py-2">
+                    <button class="btn btn-link p-0 me-2" id="backToMain3"><i class="fas fa-chevron-left"></i></button>
+                    <span class="fw-semibold">Electricidad</span>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Cables y Conductores</li>
+                    <li class="list-group-item">Iluminación</li>
+                    <li class="list-group-item">Interruptores</li>
+                </ul>
+            </div>
+            <div id="subcategoriasPlomeria" class="categorias-menu-list d-none">
+                <div class="d-flex align-items-center border-bottom px-3 py-2">
+                    <button class="btn btn-link p-0 me-2" id="backToMain4"><i class="fas fa-chevron-left"></i></button>
+                    <span class="fw-semibold">Plomería</span>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Tuberías</li>
+                    <li class="list-group-item">Grifería</li>
+                    <li class="list-group-item">Accesorios</li>
+                </ul>
+            </div>
+        </div>
+    </div>
 
-  <form class="search-form" method="get" action="#">
-    <input type="text" name="s" placeholder="¿Qué necesitas?" />
-    <button type="submit">🔍</button>
-  </form>
-</div>
-
-    </header>
-    <main>
-        {% block content %}{% endblock %}
+    <!-- Contenido principal -->
+    <main class="py-4">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
     </main>
-    <footer>
-        <p>© 2025 FERREMAS. Todos los derechos reservados.</p>
+
+    <!-- Modal del Carrito -->
+    <div class="modal fade" id="cartModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Carrito de Compras</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="cartItems" class="cart-items">
+                        <!-- Los items del carrito se cargarán aquí -->
+                    </div>
+                    <div class="cart-total mt-3">
+                        <h5>Total: $<span id="cartTotal">0</span></h5>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Seguir comprando</button>
+                    <button type="button" class="btn btn-danger" id="clearCart">Vaciar carrito</button>
+                    <button type="button" class="btn btn-primary" id="checkout">Proceder al pago</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <h5>¿Necesitas Ayuda?</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">Centro de ayuda</a></li>
+                        <li><a href="#" class="text-white">Estado de mi despacho</a></li>
+                        <li><a href="#" class="text-white">Preguntas frecuentes</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Acerca de Ferremas</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">Quiénes somos</a></li>
+                        <li><a href="#" class="text-white">Términos y condiciones</a></li>
+                        <li><a href="#" class="text-white">Privacidad y seguridad</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Servicios</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">Ventas Empresas</a></li>
+                        <li><a href="#" class="text-white">Asesórate Online</a></li>
+                        <li><a href="#" class="text-white">Puntos de venta</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Síguenos</h5>
+                    <div class="social-links">
+                        <a href="#" class="text-white me-2"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-white me-2"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Navegación entre categorías y subcategorías en el offcanvas
+        function showMenu(menuId) {
+            document.querySelectorAll('.categorias-menu-list').forEach(el => el.classList.add('d-none'));
+            document.getElementById(menuId).classList.remove('d-none');
+        }
+        document.querySelectorAll('[data-categoria]').forEach(item => {
+            item.addEventListener('click', function() {
+                const cat = this.getAttribute('data-categoria');
+                if (cat === 'herramientas') showMenu('subcategoriasHerramientas');
+                if (cat === 'construccion') showMenu('subcategoriasConstruccion');
+                if (cat === 'electricidad') showMenu('subcategoriasElectricidad');
+                if (cat === 'plomeria') showMenu('subcategoriasPlomeria');
+            });
+        });
+        document.getElementById('backToMain1').onclick = () => showMenu('categoriasMain');
+        document.getElementById('backToMain2').onclick = () => showMenu('categoriasMain');
+        document.getElementById('backToMain3').onclick = () => showMenu('categoriasMain');
+        document.getElementById('backToMain4').onclick = () => showMenu('categoriasMain');
+        // Al abrir el offcanvas, siempre mostrar el menú principal
+        document.getElementById('offcanvasCategorias').addEventListener('show.bs.offcanvas', function() {
+            showMenu('categoriasMain');
+        });
+
+        // Funcionalidad del buscador
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        let searchTimeout;
+
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            const query = this.value.trim();
+            
+            if (query.length < 2) {
+                searchResults.innerHTML = '';
+                searchResults.style.display = 'none';
+                return;
+            }
+
+            searchTimeout = setTimeout(() => {
+                fetch(`/api/buscar?q=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        searchResults.innerHTML = '';
+                        if (data.length > 0) {
+                            data.forEach(producto => {
+                                const div = document.createElement('div');
+                                div.className = 'search-result-item';
+                                div.innerHTML = `
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-0">${producto.nombre}</h6>
+                                            <small>$${producto.precio}</small>
+                                        </div>
+                                        <button class="btn btn-sm btn-primary add-to-cart" 
+                                                data-id="${producto.id}"
+                                                data-nombre="${producto.nombre}"
+                                                data-precio="${producto.precio}">
+                                            <i class="fas fa-cart-plus"></i>
+                                        </button>
+                                    </div>
+                                `;
+                                searchResults.appendChild(div);
+                            });
+                            searchResults.style.display = 'block';
+                        } else {
+                            searchResults.innerHTML = '<div class="p-2">No se encontraron productos</div>';
+                            searchResults.style.display = 'block';
+                        }
+                    });
+            }, 300);
+        });
+
+        // Cerrar resultados al hacer clic fuera
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.style.display = 'none';
+            }
+        });
+
+        // Funcionalidad del carrito
+        let cart = [];
+
+        function updateCartCount() {
+            const count = cart.reduce((total, item) => total + item.cantidad, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+
+        function updateCartDisplay() {
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+            
+            cartItems.innerHTML = '';
+            let total = 0;
+
+            cart.forEach(item => {
+                const itemTotal = item.precio * item.cantidad;
+                total += itemTotal;
+
+                const div = document.createElement('div');
+                div.className = 'cart-item mb-3 p-2 border-bottom';
+                div.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">${item.nombre}</h6>
+                            <small>$${item.precio} x ${item.cantidad}</small>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="input-group input-group-sm me-2" style="width: 100px;">
+                                <button class="btn btn-outline-secondary decrease-quantity" data-id="${item.id}">-</button>
+                                <input type="number" class="form-control text-center quantity-input" 
+                                       value="${item.cantidad}" min="1" data-id="${item.id}">
+                                <button class="btn btn-outline-secondary increase-quantity" data-id="${item.id}">+</button>
+                            </div>
+                            <button class="btn btn-sm btn-danger remove-item" data-id="${item.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                cartItems.appendChild(div);
+            });
+
+            cartTotal.textContent = total.toLocaleString();
+            updateCartCount();
+        }
+
+        // Cargar carrito al iniciar
+        fetch('/api/carrito')
+            .then(response => response.json())
+            .then(data => {
+                cart = data;
+                updateCartDisplay();
+            });
+
+        // Agregar al carrito
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('add-to-cart')) {
+                const button = e.target;
+                const producto = {
+                    id: button.dataset.id,
+                    nombre: button.dataset.nombre,
+                    precio: parseFloat(button.dataset.precio),
+                    cantidad: 1
+                };
+
+                fetch('/api/carrito/agregar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(producto)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    cart = data;
+                    updateCartDisplay();
+                    searchResults.style.display = 'none';
+                });
+            }
+        });
+
+        // Actualizar cantidad
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('decrease-quantity') || e.target.classList.contains('increase-quantity')) {
+                const button = e.target;
+                const id = button.dataset.id;
+                const item = cart.find(item => item.id == id);
+                
+                if (item) {
+                    if (button.classList.contains('decrease-quantity')) {
+                        item.cantidad = Math.max(1, item.cantidad - 1);
+                    } else {
+                        item.cantidad += 1;
+                    }
+
+                    fetch('/api/carrito/actualizar', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(item)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        cart = data;
+                        updateCartDisplay();
+                    });
+                }
+            }
+        });
+
+        // Eliminar del carrito
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-item')) {
+                const button = e.target;
+                const id = button.dataset.id;
+
+                fetch(`/api/carrito/eliminar/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    cart = data;
+                    updateCartDisplay();
+                });
+            }
+        });
+
+        // Vaciar carrito
+        document.getElementById('clearCart').addEventListener('click', function() {
+            if (confirm('¿Estás seguro de que deseas vaciar el carrito?')) {
+                fetch('/api/carrito/limpiar', {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    cart = [];
+                    updateCartDisplay();
+                });
+            }
+        });
+
+        // Proceder al pago
+        document.getElementById('checkout').addEventListener('click', function() {
+            if (cart.length === 0) {
+                alert('El carrito está vacío');
+                return;
+            }
+            // Aquí iría la lógica para proceder al pago
+            alert('Funcionalidad de pago en desarrollo');
+        });
+    </script>
 </body>
 </html>

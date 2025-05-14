@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Checkout - Inicio{% endblock %}
+{% block content %}
+<h2 class="mb-4">Checkout - Datos del Usuario</h2>
+<form method="post">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre completo</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Correo electrónico</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="telefono" class="form-label">Teléfono</label>
+                <input type="text" class="form-control" id="telefono" name="telefono" required>
+            </div>
+            <div class="mb-3">
+                <label for="direccion" class="form-label">Dirección</label>
+                <input type="text" class="form-control" id="direccion" name="direccion" required>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h4>Resumen del Carrito</h4>
+            <ul class="list-group mb-3">
+                {% for item in carrito %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ item.nombre }} <span>x{{ item.cantidad }}</span>
+                    <span>${{ item.precio * item.cantidad }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+            <h5>Total: ${{ carrito | sum(attribute='precio', start=0) }}</h5>
+        </div>
+    </div>
+    <div class="mt-4 text-end">
+        <button type="submit" class="btn btn-primary btn-lg">Continuar</button>
+    </div>
+</form>
+{% endblock %} 
