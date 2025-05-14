@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Carrito de Compras{% endblock %}
+{% block content %}
+<h2 class="mb-4">Carrito de Compras</h2>
+{% if carrito and carrito|length > 0 %}
+<div class="table-responsive">
+    <table class="table align-middle">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+                <th>Total</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in carrito %}
+            <tr>
+                <td>{{ item.nombre }}</td>
+                <td>${{ item.precio }}</td>
+                <td>
+                    <form method="post" action="/api/carrito/actualizar" class="d-inline">
+                        <input type="hidden" name="id" value="{{ item.id }}">
+                        <input type="number" name="cantidad" value="{{ item.cantidad }}" min="1" style="width:60px;">
+                        <button class="btn btn-sm btn-outline-secondary" type="submit">Actualizar</button>
+                    </form>
+                </td>
+                <td>${{ item.precio * item.cantidad }}</td>
+                <td>
+                    <form method="post" action="/api/carrito/eliminar/{{ item.id }}" class="d-inline">
+                        <button class="btn btn-sm btn-danger" type="submit"><i class="fas fa-trash"></i></button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="d-flex justify-content-between align-items-center mt-4">
+    <h4>Total: ${{ carrito | sum(attribute='precio', start=0) }}</h4>
+    <a href="/checkout/inicio" class="btn btn-success btn-lg">Ir a pagar</a>
+</div>
+{% else %}
+<div class="alert alert-info">Tu carrito está vacío.</div>
+{% endif %}
+{% endblock %} 

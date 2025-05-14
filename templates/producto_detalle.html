@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ producto.nombre }} - Detalle{% endblock %}
+{% block content %}
+<div class="row mt-4">
+    <div class="col-md-5 text-center">
+        <img src="{{ producto.imagen or 'https://via.placeholder.com/400' }}" class="img-fluid rounded shadow" alt="{{ producto.nombre }}">
+    </div>
+    <div class="col-md-7">
+        <h2>{{ producto.nombre }}</h2>
+        <h4 class="text-primary">${{ producto.precio | int | string | replace(',', '.') }}</h4>
+        <p class="text-muted">{{ producto.descripcion or 'Sin descripción.' }}</p>
+        <p><strong>Stock:</strong> {{ producto.cantidad if producto.cantidad is defined else 'N/D' }}</p>
+        <button class="btn btn-success btn-lg mt-3" id="addToCartBtn" data-id="{{ producto.id }}" data-nombre="{{ producto.nombre }}" data-precio="{{ producto.precio }}">
+            <i class="fas fa-cart-plus"></i> Agregar al carrito
+        </button>
+    </div>
+</div>
+<script>
+    document.getElementById('addToCartBtn').onclick = function() {
+        const btn = this;
+        const producto = {
+            id: btn.dataset.id,
+            nombre: btn.dataset.nombre,
+            precio: parseFloat(btn.dataset.precio),
+            cantidad: 1
+        };
+        fetch('/api/carrito/agregar', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(producto)
+        })
+        .then(r => r.json())
+        .then(data => {
+            alert('Producto agregado al carrito');
+            // Opcional: actualizar contador de carrito
+            location.reload();
+        });
+    };
+</script>
+{% endblock %} 
