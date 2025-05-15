@@ -2,14 +2,14 @@ services:
   - type: web
     name: ferremas
     env: python
-    runtime: python3.11
+    runtime: python3.9
     buildCommand: |
       python -m pip install --upgrade pip
       pip install --upgrade setuptools wheel
-      pip install -r requirements.txt
+      pip install -r requirements.txt --no-cache-dir
     startCommand: gunicorn app:app
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.0
+        value: 3.9.18
       - key: PYTHONPATH
         value: /opt/render/project/src 
